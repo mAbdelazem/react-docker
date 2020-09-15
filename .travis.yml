@@ -1,8 +1,25 @@
 sudo: required
+
 services:
     - docker
+
 before_install:
     - docker build -t travisimage -f Dockerfile.dev .
+
 script: 
     - docker run -e CI=true travisimage npm run test 
+
 language: generic
+
+deploy:
+    provider: elasticbeanstalk
+    region: "us-east-1"
+    app: "docker-react"
+    env: "DockerReact-env"
+    bucket_name: "elasticbeanstalk-us-east-1-726199395573"
+    bucket_path: "docker-react"
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key:
+        secure: "$AWS_SECERET_KEY"
